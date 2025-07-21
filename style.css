@@ -1,0 +1,10 @@
+body {
+    font-family: sans-serif;
+    margin: 2em;
+    background: #fdfdfd;
+  }
+  
+  svg {
+    border: 1px solid #ccc;
+  }
+  
