@@ -38,8 +38,8 @@ async function drawChart() {
   console.log(national)
 
   // With national data setup lets do the segments
-  first_segment = national.filter(d => d.startDate <= new Date("2020-12-09"));
-  second_segment = national.filter(d => d.startDate > new Date("2020-12-09"));
+  first_segment = national.filter(d => d.startDate <= new Date("2020-12-22"));
+  second_segment = national.filter(d => d.startDate >= new Date("2020-12-09"));
 
   max_cli = 0
   national.forEach(d => {
@@ -63,7 +63,7 @@ async function drawChart() {
     .y(d => ys(d.value));
 
   line_path1 = g.append("path")
-    .datum(national)
+    .datum(first_segment)
     .attr("fill", "none")
     .attr("stroke", "indianred")
     .attr("stroke-width", 2)
@@ -74,7 +74,25 @@ async function drawChart() {
     })
     .attr("stroke-dashoffset", function() {
       return this.getTotalLength();
-    });;
+    });
+
+  const line2 = d3.line()
+  .x(d => xs(d.startDate))
+  .y(d => ys(d.value));
+
+  line_path2 = g.append("path")
+    .datum(second_segment)
+    .attr("fill", "none")
+    .attr("stroke", "indianred")
+    .attr("stroke-width", 2)
+    .attr("d", line2)
+    .attr("stroke-dasharray", function() {
+      const length = this.getTotalLength();
+      return `${length} ${length}`;
+    })
+    .attr("stroke-dashoffset", function() {
+      return this.getTotalLength();
+    });
 
   svg.append("text")
     .attr("x", 50)
@@ -133,53 +151,75 @@ async function drawChart() {
       y: d => ys(d.value) 
     });
 
-  svg.append("g")
-    // .attr("transform", `translate(0,${height})`)
-    .attr("class", "annotations-group")
-    .call(annotate_graph);
+  // svg.append("g")
+  //   // .attr("transform", `translate(0,${height})`)
+  //   .attr("class", "annotations-group")
+  //   .call(annotate_graph);
 
 
 
-  const on_line = 1
+  on_first_line = true
   // Advance the line
   d3.select("#advanceBtn").on("click", () => {
-    if (on_line == 1){
+    if (on_first_line){
       line_path1
-      .transition()
-      .duration(1000) // 10 seconds
-      .ease(d3.easeLinear)
-      .attr("stroke-dashoffset", 0);
+        .transition()
+        .duration(1000) // 10 seconds
+        .ease(d3.easeLinear)
+        .attr("stroke-dashoffset", 0)
+        .on("end", () => {
+          svg.append("g")
+          // .attr("transform", `translate(0,${height})`)
+          .attr("class", "annotations-group")
+          .call(annotate_graph);
+        });
+
+
+      on_first_line = false
+    } else {
+      line_path2
+        .transition()
+        .duration(9000) // 10 seconds
+        .ease(d3.easeLinear)
+        .attr("stroke-dashoffset", 0);
     }
     
   });
 }
 
+
+async function drawSecondChart() {
+  const data = await d3.csv("covid_mental_health_data.csv", d => ({
+    indicator: d.Indicator,
+    group: d.Group,
+    subgroup: d.Subgroup,
+    state: d.State,
+    startDate: d3.timeParse("%m/%d/%Y")(d["Time Period Start Date"]),
+    value: +d.Value,
+    lowCI: +d["Low CI"],
+    highCI: +d["High CI"]
+  }));
+
+  console.log(data)
+
+  max_cli = 0
+  national.forEach(d => {
+    if (d.highCI > max_cli) {
+      max_cli = d.highCI
+    }
+  });
+  console.log(max_cli)
+  
+  // Hard code the sacles cause im terrible
+  const xs = d3.scaleTime().domain([new Date("2020-04-23"), new Date("2024-08-20")]).range([0, width]);
+  const ys = d3.scaleLinear().domain([0, max_cli]).range([height, 0]);
+
+  // Create axis
+  g.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(xs));
+  g.append("g").call(d3.axisLeft(ys));
+}
+
 const tooltip = d3.select("#tooltip");
-// const first_segment = national.filter
-
-
-// const data = await d3.csv("covid_mental_health_data.csv", d => ({
-//   indicator: d.Indicator,
-//   group: d.Group,
-//   subgroup: d.Subgroup,
-//   state: d.State,
-//   startDate: d3.timeParse("%m/%d/%Y")(d["Time Period Start Date"]),
-//   value: +d.Value,
-//   lowCI: +d["Low CI"],
-//   highCI: +d["High CI"]
-// }));
-
-// console.log(data)
-
-// // Now lets filter down to the national data
-// const national = data.filter(d =>
-//   d.group === "National Estimate" &&
-//   d.state === "United States" &&
-//   d.subgroup === "United States" &&
-//   d.indicator === "Symptoms of Depressive Disorder" &&
-//   d.highCI != 0
-// ).sort((a, b) => d3.ascending(a.startDate, b.startDate));
-
-// console.log(national)
 
 drawChart()
+drawSecondChart()
