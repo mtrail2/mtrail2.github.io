@@ -8,13 +8,35 @@
 </head>
 <body>
   <h1>D3 Narrative Visualization</h1>
+  <div id="intro">
+    <p>
+      There will be things here...I swear...
+    </p>
+  </div>
+
+  <button id="advanceBtn">Advance Time</button>
+  <!-- This is the chart itself -->
   <svg width="800" height="600"></svg>
 
   <!-- D3 & Dependencies -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="https://unpkg.com/d3-annotation@2.5.1/d3-annotation.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.1/d3-annotation.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.1/d3-annotation.min.js" integrity="sha512-iBAeBWWWFb8HqSBcrqcz98iIpuVH1la39dEYHtyQ/pGpeCQTQVvLJOWAuhv2Q7JSHp9k7hWA7sGxU3hHJe+tFg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
   <script src="https://unpkg.com/topojson-client@3"></script>
   
+  <div id="tooltip" style="
+    position: absolute;
+    text-align: left;
+    width: auto;
+    padding: 8px;
+    font-size: 13px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    pointer-events: none;
+    opacity: 0;
+  "></div>
+
   <script src="script.js"></script>
 </body>
 </html>
