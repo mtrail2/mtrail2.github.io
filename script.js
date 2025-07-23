@@ -278,12 +278,37 @@ async function drawSecondChart() {
     
     // Hard code the sacles cause im terrible
     const xs = d3.scaleTime().domain([new Date("2020-04-23"), new Date("2024-08-20")]).range([0, width]);
-    const ys = d3.scaleLinear().domain([0, max_cli]).range([height, 0]);
+    const ys = d3.scaleLinear().domain([0, 50]).range([height, 0]);
   
     // Create axis
     g2.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(xs));
     g2.append("g").call(d3.axisLeft(ys));
+    
+    // Line time lets gooo
+    const line = d3.line()
+    .x(d => xs(d.startDate))
+    .y(d => ys(d.value));
 
+    line_path = g2.append("path")
+      .datum(avg_data)
+      .attr("fill", "none")
+      .attr("stroke", "indianred")
+      .attr("stroke-width", 2)
+      .attr("d", line)
+      .attr("stroke-dasharray", function() {
+        const length = this.getTotalLength();
+        return `${length} ${length}`;
+      })
+      .attr("stroke-dashoffset", function() {
+        return this.getTotalLength();
+      });
+
+
+    line_path
+      .transition()
+      .duration(5000) // 10 seconds
+      .ease(d3.easeLinear)
+      .attr("stroke-dashoffset", 0);
     
   });
 
