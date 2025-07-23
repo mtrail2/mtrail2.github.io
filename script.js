@@ -42,7 +42,8 @@ async function drawChart() {
 
   // With national data setup lets do the segments
   first_segment = national.filter(d => d.startDate <= new Date("2020-12-22"));
-  second_segment = national.filter(d => d.startDate >= new Date("2020-12-09"));
+  second_segment = national.filter(d => d.startDate >= new Date("2020-12-09") && d.startDate <= new Date("2021-05-12"));
+  third_segment = national.filter(d => d.startDate >= new Date("2021-04-28"));
 
   max_cli = 0
   national.forEach(d => {
@@ -97,6 +98,26 @@ async function drawChart() {
       return this.getTotalLength();
     });
 
+  const line3 = d3.line()
+    .x(d => xs(d.startDate))
+    .y(d => ys(d.value));
+  
+  line_path3 = g.append("path")
+    .datum(third_segment)
+    .attr("fill", "none")
+    .attr("stroke", "indianred")
+    .attr("stroke-width", 2)
+    .attr("d", line3)
+    .attr("stroke-dasharray", function() {
+      const length = this.getTotalLength();
+      return `${length} ${length}`;
+    })
+    .attr("stroke-dashoffset", function() {
+      return this.getTotalLength();
+    });
+
+
+  // Here is the title
   svg.append("text")
     .attr("x", 50)
     .attr("y", 30)
@@ -144,21 +165,38 @@ async function drawChart() {
       data: { date: new Date("2021-04-01"), value: 27 },
       dy: 0,
       dx: 75
+    },
+    {
+      note: {
+        label: "Over 100 Million Americans were vaccinated",
+        title: "April 28, 2021",
+        wrap: 200,
+      },
+      data: { date: new Date("2021-08-15"), value: 19 },
+      dy: 90,
+      dx: 50
     }
   ]
 
-  annotate_graph = d3.annotation()
-    .annotations(annotations)
+  annotate_graph1 = d3.annotation()
+    .annotations([annotations[0]])
+    .accessors({
+      x: d => xs(d.date),
+      y: d => ys(d.value) 
+    });
+
+  annotate_graph2 = d3.annotation()
+    .annotations([annotations[1]])
     .accessors({
       x: d => xs(d.date),
       y: d => ys(d.value) 
     });
 
 
-  on_first_line = true
+  on_line = 1
   // Advance the line
   d3.select("#advanceBtn").on("click", () => {
-    if (on_first_line){
+    if (on_line == 1){
       line_path1
         .transition()
         .duration(1000) // 10 seconds
@@ -166,20 +204,30 @@ async function drawChart() {
         .attr("stroke-dashoffset", 0)
         .on("end", () => {
           svg.append("g")
-          // .attr("transform", `translate(0,${height})`)
           .attr("class", "annotations-group")
-          .call(annotate_graph);
+          .call(annotate_graph1);
         });
 
-
-      on_first_line = false
-    } else {
+    } else if (on_line == 2) {
       line_path2
         .transition()
-        .duration(9000) // 10 seconds
+        .duration(1000) // 10 seconds
+        .ease(d3.easeLinear)
+        .attr("stroke-dashoffset", 0)
+        .on("end", () => {
+          svg.append("g")
+          .attr("class", "annotations-group")
+          .call(annotate_graph2);
+        });
+    } else {
+      line_path3
+        .transition()
+        .duration(1000) // 10 seconds
         .ease(d3.easeLinear)
         .attr("stroke-dashoffset", 0);
     }
+
+    on_line += 1
     
   });
 }
