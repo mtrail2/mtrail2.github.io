@@ -12,8 +12,8 @@
     <p>
       COVID was a challenging time for many. One way we have to measure this is the CDC household pulse survey which was a survey sent to houseohlds
       and individuals to get an estimate of the mental health situation of the United States. The link to the dataset is found at the bottom of this
-      narrative visualization, and also included in this repository. This survey sent out questions that individuals would answer, and based on their
-      answers were given a score of wether or not they were showcasing symptoms of depression or anxiety, or both. It is improtant to note that these
+      narrative visualization, and also included in this repository. This survey sent out includes questions that individuals would answer, and based on their
+      answers were given a score of whether or not they were showcasing symptoms of depression or anxiety, or both. It is improtant to note that these
       results are not formal medical results, but instead help compliment other COVID related research. In this visualization you will see language
       such as "Depression Rate", but keep in mind this is meant to convey a sense of clarification to the user. What his data formally displays, is
       the percentage of households that show strong symptoms of depression within a 95% confidence interval.
@@ -25,7 +25,11 @@
     </p>
   </div>
 
-  <button id="advanceBtn">Advance Time</button>
+  <div>
+    <button id="advanceBtn">Advance Time</button>
+  </div>
+
+  <!-- <button id="advanceBtn">Advance Time</button> -->
   <!-- This is the chart itself -->
   <svg width="800" height="600"></svg>
 
@@ -37,10 +41,15 @@
   </div>
 
   <!-- Now lets setup part two of the visualization -->
-  <h1>See how people like you did...</h1>
+  <h1>Simulate and Explore Yourself</h1>
   <div id="info">
     <p>
-      There will be things here...I swear...
+      Also included in the dataset are various attributes related to each individual or household that participated, including: age, sex, ethnicity, and education level.
+      Please select which set of attributes best represent yourself, or other attributes you wish to see, and learn how the depression rate of those groups of people
+      changed over time. It is important to note that this is an approximation, there are seperate entries for each attribute, so to simulate groups with mutliple 
+      attributes, the values are averaged. For example, for males in the age rage of 18-29, the depression rates for males are averaged with the depression rates
+      for the age range 18-29. This means mutliple attributes are not an exact match, but this can be used to get a rough estimate of how the depression rate of 
+      certain attribute groups changed.
     </p>
   </div>
   <div>

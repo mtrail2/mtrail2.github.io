@@ -124,6 +124,21 @@ async function drawChart() {
     .attr("font-size", "18px")
     .text("National Depression Rates Over Time");
 
+  // adding some axis labels
+  svg.append("text")
+    .attr("text-anchor", "middle")
+    .attr("x", width / 2)
+    .attr("y", height + 90)
+    .text("Date")
+    .attr("class", "axis-label");
+
+  svg.append("text")
+    .attr("text-anchor", "middle")
+    .attr("transform", "rotate(90, 100, 350)")
+    .attr("x", 60)
+    .attr("y", 440)  // pull inward from left edge
+    .text("Depression Rate (%)")
+    .attr("class", "axis-label");
 
   // Next lets add some tooltips
   svg.selectAll("circle")
@@ -222,7 +237,7 @@ async function drawChart() {
     } else {
       line_path3
         .transition()
-        .duration(1000) // 10 seconds
+        .duration(5000) // 10 seconds
         .ease(d3.easeLinear)
         .attr("stroke-dashoffset", 0);
     }
@@ -352,7 +367,7 @@ async function drawSecondChart() {
     
     // Hard code the sacles cause im terrible
     const xs = d3.scaleTime().domain([new Date("2020-04-23"), new Date("2024-08-20")]).range([0, width]);
-    const ys = d3.scaleLinear().domain([0, 50]).range([height, 0]);
+    const ys = d3.scaleLinear().domain([0, 40]).range([height, 0]);
   
     // Create axis
     g2.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(xs));
@@ -412,7 +427,23 @@ async function drawSecondChart() {
         d3.select(this).style("opacity", 0);
         tooltip.style("opacity", 0);
       });
-    
+
+
+    svg2.append("text")
+      .attr("text-anchor", "middle")
+      .attr("x", width / 2)
+      .attr("y", height + 90)
+      .text("Date")
+      .attr("class", "axis-label");
+
+    svg2.append("text")
+      .attr("text-anchor", "middle")
+      .attr("transform", "rotate(90, 100, 350)")
+      .attr("x", 60)
+      .attr("y", 440)  // pull inward from left edge
+      .text("Depression Rate (%)")
+      .attr("class", "axis-label");
+      
   });
 
 }

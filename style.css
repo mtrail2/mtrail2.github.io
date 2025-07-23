@@ -16,3 +16,8 @@ body {
   line-height: 1.5;
   color: #333;
 }
+
+.axis-label {
+  font-size: 14px;
+  fill: #333;
+}
