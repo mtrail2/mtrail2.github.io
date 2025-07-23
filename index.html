@@ -8,9 +8,20 @@
 </head>
 <body>
   <h1>D3 Narrative Visualization</h1>
-  <div id="intro">
+  <div id="info">
     <p>
-      There will be things here...I swear...
+      COVID was a challenging time for many. One way we have to measure this is the CDC household pulse survey which was a survey sent to houseohlds
+      and individuals to get an estimate of the mental health situation of the United States. The link to the dataset is found at the bottom of this
+      narrative visualization, and also included in this repository. This survey sent out questions that individuals would answer, and based on their
+      answers were given a score of wether or not they were showcasing symptoms of depression or anxiety, or both. It is improtant to note that these
+      results are not formal medical results, but instead help compliment other COVID related research. In this visualization you will see language
+      such as "Depression Rate", but keep in mind this is meant to convey a sense of clarification to the user. What his data formally displays, is
+      the percentage of households that show strong symptoms of depression within a 95% confidence interval.
+    </p>
+    <p>
+      With that, let us first show a broad overview of how the population of the United States was doing during COVID from April 2020 - August 2024.
+      Please click the advance time button below to see how the depression rate changed over time.
+
     </p>
   </div>
 
@@ -18,9 +29,16 @@
   <!-- This is the chart itself -->
   <svg width="800" height="600"></svg>
 
+  <div id="info">
+    <p>
+      As you can see on Dec 11th, 2020 the first COVID vaccines for Pfizer and Moderna were approved byu the FDA to be given to the population.
+      Only a couple months after that and almost a third of the US had been vaccinated, and the depression rate had gone down roughly 10%.
+    </p>
+  </div>
+
   <!-- Now lets setup part two of the visualization -->
   <h1>See how people like you did...</h1>
-  <div id="intro">
+  <div id="info">
     <p>
       There will be things here...I swear...
     </p>
@@ -43,6 +61,25 @@
       <option value="">Select Sex</option>
       <option value="Male">Male</option>
       <option value="Female">Female</option>
+    </select>
+
+    <label for="ethnicity">Ethnicity:</label>
+    <select id="ethnicity">
+      <option value="">Select Ethnicity</option>
+      <option value="Hispanic or Latino">Hispanic or Latino</option>
+      <option value="Non-Hispanic White, single race">White</option>
+      <option value="Non-Hispanic Black, single race">Black</option>
+      <option value="Non-Hispanic Asian, single race">Asian</option>
+      <option value="Non-Hispanic, other races and multiple races">Other</option>
+    </select>
+
+    <label for="education">Education Level:</label>
+    <select id="education">
+      <option value="">Select Education Level</option>
+      <option value="Less than a high school diploma">Less than high school diploma</option>
+      <option value="High school diploma or GED">High school diploma or GED</option>
+      <option value="Some college/Associate's degree">Some college/Associate's degree</option>
+      <option value="Bachelor's degree or higher">Bachelor's degree or higher</option>
     </select>
 
     <button id="update-query">Simulate</button>

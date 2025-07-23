@@ -213,6 +213,8 @@ async function drawSecondChart() {
     console.log("UPDATINGS")
     age_query = d3.select("#age").property("value");
     sex_query = d3.select("#sex").property("value");
+    ethnicity_query = d3.select("#ethnicity").property("value");
+    education_query = d3.select("#education").property("value");
 
     // Check for age and get resutls as needed
     if (age_query != ""){
@@ -231,6 +233,30 @@ async function drawSecondChart() {
       query_data = data.filter(d =>
         d.group === "By Sex" &&
         d.subgroup === sex_query &&
+        d.state === "United States" &&
+        d.indicator === "Symptoms of Depressive Disorder" &&
+        d.highCI != 0
+      ).sort((a, b) => d3.ascending(a.startDate, b.startDate));
+      filtered_data.push(...query_data)
+    }
+
+    // Ethnicity next
+    if (ethnicity_query != ""){
+      query_data = data.filter(d =>
+        d.group === "By Race/Hispanic ethnicity" &&
+        d.subgroup === ethnicity_query &&
+        d.state === "United States" &&
+        d.indicator === "Symptoms of Depressive Disorder" &&
+        d.highCI != 0
+      ).sort((a, b) => d3.ascending(a.startDate, b.startDate));
+      filtered_data.push(...query_data)
+    }
+
+    // Lastly lets do education
+    if (education_query != ""){
+      query_data = data.filter(d =>
+        d.group === "By Education" &&
+        d.subgroup === education_query &&
         d.state === "United States" &&
         d.indicator === "Symptoms of Depressive Disorder" &&
         d.highCI != 0
@@ -309,6 +335,35 @@ async function drawSecondChart() {
       .duration(5000) // 10 seconds
       .ease(d3.easeLinear)
       .attr("stroke-dashoffset", 0);
+
+    // Lets add tooltips here as well
+    svg2.selectAll("circle")
+      .data(avg_data)
+      .enter()
+      .append("circle")
+      .attr("transform", "translate(50,50)")
+      .attr("cx", d => xs(d.startDate))
+      .attr("cy", d => ys(d.value))
+      .attr("r", 4)
+      .attr("fill", "black")
+      .attr("stroke", "white")
+      .attr("stroke-width", 1)
+      .style("opacity", 0)
+      .on("mouseover", function(event, d) {
+        d3.select(this).style("opacity", 1);
+        tooltip
+          .style("opacity", 1)
+          .html(`
+            <strong>${(String(d.startDate).slice(0, 15))}</strong><br>
+            Depression Rate: ${d.value}%<br>
+          `)
+          .style("left", `${event.pageX + 10}px`)
+          .style("top", `${event.pageY - 28}px`);
+      })
+      .on("mouseout", function() {
+        d3.select(this).style("opacity", 0);
+        tooltip.style("opacity", 0);
+      });
     
   });
 
