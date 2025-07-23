@@ -25,7 +25,29 @@
       There will be things here...I swear...
     </p>
   </div>
-  <svg width="800" height="600"></svg>
+  <div>
+    <label for="age">Age Group:</label>
+    <select id="age">
+      <option value="">Select Age Group</option>
+      <option value="18 - 29 years">18 - 29</option>
+      <option value="30 - 39 years">30 - 39</option>
+      <option value="40 - 49 years">40 - 49</option>
+      <option value="50 - 59 years">50 - 59</option>
+      <option value="60 - 69 years">60 - 69</option>
+      <option value="70 - 79 years">70 - 79</option>
+      <option value="80 years and above">80+</option>
+    </select>
+
+    <label for="sex">Sex:</label>
+    <select id="sex">
+      <option value="">Select Sex</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+
+    <button id="update-query">Simulate</button>
+  </div>
+  <svg id="query-canvas" width="800" height="600"></svg>
 
   <!-- D3 & Dependencies -->
   <script src="https://d3js.org/d3.v7.min.js"></script>

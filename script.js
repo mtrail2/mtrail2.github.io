@@ -12,6 +12,9 @@ const height = +svg.attr("height") - 100;
 
 const g = svg.append("g").attr("transform", "translate(50,50)");
 
+const svg2 = d3.select("#query-canvas");
+// const g2 = svg2.append("g").attr("transform", "translate(50,50)");
+
 async function drawChart() {
   const data = await d3.csv("covid_mental_health_data.csv", d => ({
     indicator: d.Indicator,
@@ -24,7 +27,7 @@ async function drawChart() {
     highCI: +d["High CI"]
   }));
 
-  console.log(data)
+  // console.log(data)
 
   // Now lets filter down to the national data
   const national = data.filter(d =>
@@ -35,7 +38,7 @@ async function drawChart() {
     d.highCI != 0
   ).sort((a, b) => d3.ascending(a.startDate, b.startDate));
 
-  console.log(national)
+  // console.log(national)
 
   // With national data setup lets do the segments
   first_segment = national.filter(d => d.startDate <= new Date("2020-12-22"));
@@ -151,12 +154,6 @@ async function drawChart() {
       y: d => ys(d.value) 
     });
 
-  // svg.append("g")
-  //   // .attr("transform", `translate(0,${height})`)
-  //   .attr("class", "annotations-group")
-  //   .call(annotate_graph);
-
-
 
   on_first_line = true
   // Advance the line
@@ -202,21 +199,94 @@ async function drawSecondChart() {
 
   console.log(data)
 
-  max_cli = 0
-  national.forEach(d => {
-    if (d.highCI > max_cli) {
-      max_cli = d.highCI
-    }
-  });
-  console.log(max_cli)
-  
-  // Hard code the sacles cause im terrible
-  const xs = d3.scaleTime().domain([new Date("2020-04-23"), new Date("2024-08-20")]).range([0, width]);
-  const ys = d3.scaleLinear().domain([0, max_cli]).range([height, 0]);
+  filtered_data = []
+  avg_data = []
 
-  // Create axis
-  g.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(xs));
-  g.append("g").call(d3.axisLeft(ys));
+  // Setup the event listener
+  d3.select("#update-query").on("click", () => {
+    // CLears up here
+    max_cli = 0
+    filtered_data = []
+    d3.select("#query-canvas").selectAll("*").remove()
+    const g2 = svg2.append("g").attr("transform", "translate(50,50)");
+
+    console.log("UPDATINGS")
+    age_query = d3.select("#age").property("value");
+    sex_query = d3.select("#sex").property("value");
+
+    // Check for age and get resutls as needed
+    if (age_query != ""){
+      query_data = data.filter(d =>
+        d.group === "By Age" &&
+        d.subgroup === age_query &&
+        d.state === "United States" &&
+        d.indicator === "Symptoms of Depressive Disorder" &&
+        d.highCI != 0
+      ).sort((a, b) => d3.ascending(a.startDate, b.startDate));
+      filtered_data.push(...query_data)
+    }
+
+    // check for sex and get resutls as needed
+    if (sex_query != ""){
+      query_data = data.filter(d =>
+        d.group === "By Sex" &&
+        d.subgroup === sex_query &&
+        d.state === "United States" &&
+        d.indicator === "Symptoms of Depressive Disorder" &&
+        d.highCI != 0
+      ).sort((a, b) => d3.ascending(a.startDate, b.startDate));
+      filtered_data.push(...query_data)
+    }
+
+    // Now lets sort and aggregate at each timestamp
+    filtered_data = filtered_data.sort((a, b) => d3.ascending(a.startDate, b.startDate));
+    console.log(filtered_data)
+
+    // Now lets group the data and avg
+    grouped = {}
+    filtered_data.forEach(d => {
+      // Get the date and value
+      date = d.startDate
+      if (!grouped[date]) {
+        grouped[date] = {sum: 0, count: 0}
+      }
+      grouped[date].sum += d.value
+      grouped[date].count += 1
+    });
+    console.log(grouped)
+    // Now go throyugh ductioanry and average it
+    avg_data = []
+    for (date in grouped) {
+      new_date = new Date(date)
+      tmp = grouped[date]
+      avg_data.push({startDate: new_date, value: (tmp.sum/tmp.count)})
+    }
+    console.log(avg_data)
+
+    if (avg_data == []) {
+      return
+    }
+
+    // Wonderful now we can actually make the graph :)
+    max_cli
+    avg_data.forEach(d => {
+      if (d.value > max_cli) {
+        max_cli = d.value
+      }
+    });
+    console.log(max_cli)
+    
+    // Hard code the sacles cause im terrible
+    const xs = d3.scaleTime().domain([new Date("2020-04-23"), new Date("2024-08-20")]).range([0, width]);
+    const ys = d3.scaleLinear().domain([0, max_cli]).range([height, 0]);
+  
+    // Create axis
+    g2.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(xs));
+    g2.append("g").call(d3.axisLeft(ys));
+
+    
+  });
+
 }
 
 const tooltip = d3.select("#tooltip");
